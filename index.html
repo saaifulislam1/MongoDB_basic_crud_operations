@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+   
+  </head>
+  <body>
+    <h2>Add product to database throgh admin panel</h2>
+    <br />
+
+    <!-- Here the 'name ' is very important . thats the key aspect of the field -->
+    <form action="/addProduct" method="post">
+      <input type="text" placeholder="product name" name="name" required />
+      <input type="text" placeholder="product price" name="price" required />
+      <input
+        type="text"
+        placeholder="product quantity"
+        name="quantity"
+        required
+      />
+      <br />
+      <br />
+      <button type="submit">Submit</button>
+    </form>
+    <br />
+    <br />
+
+    <br />
+    <br />
+<div class="product_container">
+   <div id="product_name"></div>
+
+    <div id="update"></div>
+</div>
+   
+
+    <script>
+
+
+      function loadProducts() {
+        fetch("/products")
+          .then((res) => res.json())
+          .then((product) => {
+            //  console.log(product);
+            const container = document.getElementById("product_name");
+            container.innerHTML=""
+            product.forEach((pd) => {
+              const p = document.createElement("p");
+              p.innerHTML = `<strong>${pd.name}</strong>--<p>Price: ${pd.price} ||</p>
+              <p>quantity : <strong>${pd.quantity}</strong></p>
+
+             <button onclick=loadSingleProduct('${pd._id}') >Update</button>
+               <button onclick="deleteProduct(event,'${pd._id}')"> Delete </button>`;
+              container.appendChild(p);
+            });
+          });
+      }
+
+      loadProducts();
+
+      function deleteProduct(event,id) {
+        // console.log(event.target.parentNode)
+        fetch(`delete/${id}`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json)
+          .then((result) => {
+            if(result){
+              event.target.parentNode.style.display="none";
+            }
+          });
+      }
+
+      function updateProduct(id){
+        const price = document.getElementById('newPrice').value
+        const quantity= document.getElementById('newquantity').value
+        const product={price,quantity}
+
+        fetch(`update/${id}`,{
+          method:'PATCH',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(product)
+        })
+
+        .then (res=>res.json())
+        .then (data=>{
+          if (data){
+            loadProducts();
+          }
+          
+        })
+
+      }
+
+// laoding single product and makeing change operation
+      function loadSingleProduct(id) {
+        fetch(`/product/${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data)
+            const update = document.getElementById("update");
+            update.innerHTML = `<h3>Update : ${data.name}</h3>
+            Price :<input type="text"  id="newPrice" value=${data.price}>
+            quantity: <input type="text" id="newquantity" value=${data.quantity}>
+            <br>
+            <br>
+            <button onclick="updateProduct('${data._id}')"> Make change</button>
+            
+            `;
+          });
+      }
+
+
+    </script>
+  </body>
+</html>
