@@ -74,26 +74,7 @@
           });
       }
 
-      function updateProduct(id){
-        const price = document.getElementById('newPrice').value
-        const quantity= document.getElementById('newquantity').value
-        const product={price,quantity}
-
-        fetch(`update/${id}`,{
-          method:'PATCH',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(product)
-        })
-
-        .then (res=>res.json())
-        .then (data=>{
-          if (data){
-            loadProducts();
-          }
-          
-        })
-
-      }
+  
 
 // laoding single product and makeing change operation
       function loadSingleProduct(id) {
@@ -113,7 +94,26 @@
           });
       }
 
+    function updateProduct(id){
+        const price = document.getElementById('newPrice').value
+        const quantity= document.getElementById('newquantity').value
+        const product={price,quantity}
 
+        fetch(`update/${id}`,{
+          method:'PATCH',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(product)
+        })
+
+        .then (res=>res.json())
+        .then (data=>{
+          if (data){
+            loadProducts();
+          }
+          
+        })
+
+      }
     </script>
   </body>
 </html>
